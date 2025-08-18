@@ -1,5 +1,9 @@
 # use-shared-state
 
+[![npm version](https://badge.fury.io/js/use-shared-state.svg)](https://badge.fury.io/js/use-shared-state)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
+
 A lightweight React hook for sharing state across components using SWR with optional localStorage persistence and cross-tab synchronization.
 
 ## Features

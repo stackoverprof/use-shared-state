@@ -5,7 +5,7 @@
 1. **Update package.json**
    - Set correct author name: `"author": "Your Name <your.email@example.com>"`
    - Verify version number
-   - Ensure package name is unique on NPM
+   - Repository URLs are already configured ✅
 
 2. **Test the library**
    ```bash
