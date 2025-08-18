@@ -1,5 +1,5 @@
 {
-    "name": "use-shared-state",
+    "name": "@stackoverprof/use-shared-state",
     "version": "1.0.0",
     "description": "A React hook for sharing state across components using SWR with optional localStorage persistence",
     "type": "module",
@@ -23,7 +23,7 @@
         "localstorage",
         "typescript"
     ],
-    "author": "Your Name",
+    "author": "stackoverprof",
     "license": "MIT",
     "peerDependencies": {
         "react": ">=16.8.0",
