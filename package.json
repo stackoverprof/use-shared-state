@@ -1,0 +1,48 @@
+{
+    "name": "use-shared-state",
+    "version": "1.0.0",
+    "description": "A React hook for sharing state across components using SWR with optional localStorage persistence",
+    "type": "module",
+    "main": "dist/index.js",
+    "module": "dist/index.esm.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "rollup -c",
+        "dev": "rollup -c -w",
+        "prepublishOnly": "npm run build",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "react",
+        "hook",
+        "state",
+        "swr",
+        "localstorage",
+        "typescript"
+    ],
+    "author": "Your Name",
+    "license": "MIT",
+    "peerDependencies": {
+        "react": ">=16.8.0",
+        "swr": ">=1.0.0"
+    },
+    "devDependencies": {
+        "@rollup/plugin-node-resolve": "^15.2.3",
+        "@rollup/plugin-typescript": "^11.1.6",
+        "@types/react": "^18.2.79",
+        "rollup": "^4.13.2",
+        "tslib": "^2.6.2",
+        "typescript": "^5.4.3"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/stackoverprof/use-shared-state.git"
+    },
+    "bugs": {
+        "url": "https://github.com/stackoverprof/use-shared-state/issues"
+    },
+    "homepage": "https://github.com/stackoverprof/use-shared-state#readme"
+}
