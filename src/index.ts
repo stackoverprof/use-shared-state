@@ -11,10 +11,14 @@ type UseSharedStateReturn<T> = [T | undefined, SetState<T>];
 
 // Constants
 const PERSISTENT_KEY_PREFIX = "@" as const;
+const LOCALSTORAGE_PREFIX = "shared@" as const;
 
 // Pure utility functions
 const isPersistentKey = (key: string): boolean =>
     key.startsWith(PERSISTENT_KEY_PREFIX);
+
+const getLocalStorageKey = (key: string): string =>
+    isPersistentKey(key) ? `${LOCALSTORAGE_PREFIX}${key.slice(1)}` : key;
 
 const safeJsonParse = (value: string): unknown => {
     try {
@@ -36,7 +40,8 @@ const safeJsonStringify = (value: unknown): string => {
 const storage = {
     get: (key: string): unknown => {
         try {
-            const stored = localStorage.getItem(key);
+            const storageKey = getLocalStorageKey(key);
+            const stored = localStorage.getItem(storageKey);
             return stored ? safeJsonParse(stored) : undefined;
         } catch {
             return undefined;
@@ -45,13 +50,14 @@ const storage = {
 
     set: (key: string, value: unknown): void => {
         try {
+            const storageKey = getLocalStorageKey(key);
             const serialized = safeJsonStringify(value);
-            localStorage.setItem(key, serialized);
+            localStorage.setItem(storageKey, serialized);
 
             // Notify other tabs
             window.dispatchEvent(
                 new StorageEvent("storage", {
-                    key,
+                    key: storageKey,
                     newValue: serialized,
                     storageArea: localStorage,
                 })
@@ -63,7 +69,8 @@ const storage = {
 
     remove: (key: string): void => {
         try {
-            localStorage.removeItem(key);
+            const storageKey = getLocalStorageKey(key);
+            localStorage.removeItem(storageKey);
         } catch {
             // Ignore removal errors
         }
@@ -141,7 +148,8 @@ export const useSharedState = <T>(
         if (!persistent) return;
 
         const handleStorageChange = (event: StorageEvent) => {
-            if (event.key === key && event.newValue) {
+            const expectedStorageKey = getLocalStorageKey(key);
+            if (event.key === expectedStorageKey && event.newValue) {
                 const newValue = safeJsonParse(event.newValue);
                 if (newValue !== undefined) {
                     sharedState.set(key, newValue);
@@ -170,9 +178,13 @@ const getPersistentKeysFromStorage = (): string[] => {
     const keys: string[] = [];
     try {
         for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key?.startsWith(PERSISTENT_KEY_PREFIX)) {
-                keys.push(key);
+            const storageKey = localStorage.key(i);
+            if (storageKey?.startsWith(LOCALSTORAGE_PREFIX)) {
+                // Convert back to original key format (@key)
+                const originalKey = `@${storageKey.slice(
+                    LOCALSTORAGE_PREFIX.length
+                )}`;
+                keys.push(originalKey);
             }
         }
     } catch {

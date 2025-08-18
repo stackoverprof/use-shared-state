@@ -15,7 +15,7 @@ See real-time state sharing, persistence, and cross-tab synchronization in actio
 ## Features
 
 -   🚀 **Simple API** - Drop-in replacement for `useState` with cross-component sharing
--   💾 **Optional Persistence** - Use `@` prefix for localStorage persistence
+-   💾 **Optional Persistence** - Use `@` prefix for localStorage persistence (saved as `shared@key`)
 -   🔄 **Cross-tab Sync** - Automatic synchronization across browser tabs
 -   ⚡ **High Performance** - Optimized with minimal overhead using Map storage
 -   🛡️ **Type Safe** - Full TypeScript support with generics
@@ -38,6 +38,7 @@ const [count, setCount] = useSharedState("counter", 0);
 
 // Persistent shared state (localStorage + cross-tab sync)
 const [user, setUser] = useSharedState("@user", { name: "John" });
+// ↳ Saved in localStorage as "shared@user"
 ```
 
 ## API Reference
@@ -51,6 +52,7 @@ Returns a tuple `[state, setState]` similar to React's `useState`.
 -   `key` - Unique identifier for the shared state
     -   Regular keys: Memory-only storage
     -   Keys with `@` prefix: Persistent localStorage + cross-tab sync
+    -   **localStorage keys are prefixed with `shared@` to prevent conflicts**
 -   `initialValue` - Default value when state is undefined
 
 #### Returns
