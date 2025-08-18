@@ -6,6 +6,12 @@
 
 A lightweight React hook for sharing state across components using SWR with optional localStorage persistence and cross-tab synchronization.
 
+## 🚀 Live Demo
+
+**[Try it live →](https://use-shared-state-demo.vercel.app/)**
+
+See real-time state sharing, persistence, and cross-tab synchronization in action!
+
 ## Features
 
 -   🚀 **Simple API** - Drop-in replacement for `useState` with cross-component sharing
@@ -57,7 +63,17 @@ Returns a tuple `[state, setState]` similar to React's `useState`.
 -   **Memory-only keys**: ~0.1ms overhead
 -   **Persistent keys**: ~2-3ms overhead (includes localStorage operations)
 -   **Cross-tab sync**: Automatic with StorageEvent API
--   **Memory usage**: Efficient Map-based storage
+-   **Memory usage**: Efficient Map-based storage with automatic cleanup
+-   **Re-renders**: Only components using the changed state key re-render
+
+## Re-rendering Behavior
+
+**Important:** Only components that actively use a shared state key will re-render when that state changes.
+
+✅ **Precise targeting**: Only components using the changed key re-render  
+✅ **Parent isolation**: Parent won't re-render unless it uses shared state  
+✅ **Sibling isolation**: Unrelated siblings won't re-render  
+✅ **Performance**: Better than Context (which can cause cascade re-renders)
 
 ## Comparison with Alternatives
 
@@ -97,6 +113,43 @@ Returns a tuple `[state, setState]` similar to React's `useState`.
     ```tsx
     setCart((prev) => ({ ...prev, total: calculateTotal(prev.items) }));
     ```
+
+## Cleanup & Memory Management
+
+### **Automatic Cleanup**
+
+-   ✅ **SWR reference counting** - Cleans up when ALL components using a key unmount
+-   ✅ **Event listeners removed** - Cross-tab sync listeners auto-cleanup
+-   ✅ **Memory efficient** - Map-based storage with garbage collection
+
+### **What Gets Cleaned Up**
+
+| Type           | SWR Cleanup           | localStorage Cleanup         |
+| -------------- | --------------------- | ---------------------------- |
+| `"user-data"`  | ✅ Auto (memory only) | ❌ N/A                       |
+| `"@user-data"` | ✅ Memory cache only  | ❌ Stays until manual delete |
+
+### **Manual Cleanup**
+
+```tsx
+import { sharedStateUtils } from "@stackoverprof/use-shared-state";
+
+// Clear specific keys
+sharedStateUtils.delete("temp-data"); // Memory only
+sharedStateUtils.delete("@user-session"); // Memory + localStorage
+
+// Clear all (with/without persistent)
+sharedStateUtils.clear(false); // Memory only
+sharedStateUtils.clear(true); // Memory + localStorage
+
+// Route cleanup
+useEffect(
+    () => () => {
+        sharedStateUtils.delete("dashboard-filters");
+    },
+    []
+);
+```
 
 ## Utility Functions
 
