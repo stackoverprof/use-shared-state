@@ -1,6 +1,6 @@
 # use-shared-state
 
-[![npm version](https://badge.fury.io/js/use-shared-state.svg)](https://badge.fury.io/js/use-shared-state)
+[![npm version](https://badge.fury.io/js/%40stackoverprof%2Fuse-shared-state.svg)](https://badge.fury.io/js/%40stackoverprof%2Fuse-shared-state)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
 
@@ -19,13 +19,13 @@ A lightweight React hook for sharing state across components using SWR with opti
 ## Installation
 
 ```bash
-npm install use-shared-state swr react
+npm install @stackoverprof/use-shared-state swr react
 ```
 
 ## Quick Start
 
 ```tsx
-import { useSharedState } from "use-shared-state";
+import { useSharedState } from "@stackoverprof/use-shared-state";
 
 // Basic shared state (memory only)
 const [count, setCount] = useSharedState("counter", 0);
@@ -52,12 +52,86 @@ Returns a tuple `[state, setState]` similar to React's `useState`.
 -   `state` - Current state value (T | undefined)
 -   `setState` - Function to update state, supports value or updater function
 
+## Performance
+
+-   **Memory-only keys**: ~0.1ms overhead
+-   **Persistent keys**: ~2-3ms overhead (includes localStorage operations)
+-   **Cross-tab sync**: Automatic with StorageEvent API
+-   **Memory usage**: Efficient Map-based storage
+
+## Comparison with Alternatives
+
+| Feature              | use-shared-state | Redux  | Context | localStorage |
+| -------------------- | ---------------- | ------ | ------- | ------------ |
+| Setup complexity     | Minimal          | High   | Medium  | Manual       |
+| TypeScript support   | Full             | Good   | Good    | Manual       |
+| Cross-component sync | ✅               | ✅     | ✅      | ❌           |
+| Persistence          | Optional         | Manual | ❌      | Manual       |
+| Cross-tab sync       | ✅               | Manual | ❌      | Manual       |
+| Performance          | High             | Medium | Low\*   | High         |
+| Bundle size          | Small            | Large  | None    | None         |
+
+\*Context can cause unnecessary re-renders
+
+## Best Practices
+
+1. **Use regular keys for temporary state**
+
+    ```tsx
+    const [loading, setLoading] = useSharedState("loading", false);
+    ```
+
+2. **Use @ prefix for data that should persist**
+
+    ```tsx
+    const [settings, setSettings] = useSharedState("@user-settings", {});
+    ```
+
+3. **Provide default values for better TypeScript inference**
+
+    ```tsx
+    const [items, setItems] = useSharedState<Item[]>("items", []);
+    ```
+
+4. **Use updater functions for complex state changes**
+    ```tsx
+    setCart((prev) => ({ ...prev, total: calculateTotal(prev.items) }));
+    ```
+
+## Utility Functions
+
+The library provides debugging utilities via `sharedStateUtils`:
+
+```tsx
+import { sharedStateUtils } from "@stackoverprof/use-shared-state";
+
+// Get all current keys
+console.log(sharedStateUtils.getKeys());
+
+// Get current state size
+console.log(sharedStateUtils.getSize());
+
+// Clear all state (optionally including persistent)
+sharedStateUtils.clear(true);
+
+// Delete specific key
+sharedStateUtils.delete("some-key");
+
+// Get all persistent keys
+console.log(sharedStateUtils.getPersistentKeys());
+```
+
+## Requirements
+
+-   React >= 16.8.0
+-   SWR >= 1.0.0
+
 ## Examples
 
 ### Basic Counter
 
 ```tsx
-import { useSharedState } from "use-shared-state";
+import { useSharedState } from "@stackoverprof/use-shared-state";
 
 function Counter() {
     const [count, setCount] = useSharedState("counter", 0);
@@ -174,80 +248,6 @@ function Step2() {
     );
 }
 ```
-
-## Utility Functions
-
-The library provides debugging utilities via `sharedStateUtils`:
-
-```tsx
-import { sharedStateUtils } from "use-shared-state";
-
-// Get all current keys
-console.log(sharedStateUtils.getKeys());
-
-// Get current state size
-console.log(sharedStateUtils.getSize());
-
-// Clear all state (optionally including persistent)
-sharedStateUtils.clear(true);
-
-// Delete specific key
-sharedStateUtils.delete("some-key");
-
-// Get all persistent keys
-console.log(sharedStateUtils.getPersistentKeys());
-```
-
-## Performance
-
--   **Memory-only keys**: ~0.1ms overhead
--   **Persistent keys**: ~2-3ms overhead (includes localStorage operations)
--   **Cross-tab sync**: Automatic with StorageEvent API
--   **Memory usage**: Efficient Map-based storage
-
-## Comparison with Alternatives
-
-| Feature              | use-shared-state | Redux  | Context | localStorage |
-| -------------------- | ---------------- | ------ | ------- | ------------ |
-| Setup complexity     | Minimal          | High   | Medium  | Manual       |
-| TypeScript support   | Full             | Good   | Good    | Manual       |
-| Cross-component sync | ✅               | ✅     | ✅      | ❌           |
-| Persistence          | Optional         | Manual | ❌      | Manual       |
-| Cross-tab sync       | ✅               | Manual | ❌      | Manual       |
-| Performance          | High             | Medium | Low\*   | High         |
-| Bundle size          | Small            | Large  | None    | None         |
-
-\*Context can cause unnecessary re-renders
-
-## Best Practices
-
-1. **Use regular keys for temporary state**
-
-    ```tsx
-    const [loading, setLoading] = useSharedState("loading", false);
-    ```
-
-2. **Use @ prefix for data that should persist**
-
-    ```tsx
-    const [settings, setSettings] = useSharedState("@user-settings", {});
-    ```
-
-3. **Provide default values for better TypeScript inference**
-
-    ```tsx
-    const [items, setItems] = useSharedState<Item[]>("items", []);
-    ```
-
-4. **Use updater functions for complex state changes**
-    ```tsx
-    setCart((prev) => ({ ...prev, total: calculateTotal(prev.items) }));
-    ```
-
-## Requirements
-
--   React >= 16.8.0
--   SWR >= 1.0.0
 
 ## License
 
