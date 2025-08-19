@@ -20,13 +20,15 @@ See real-time state sharing, persistence, and cross-tab synchronization in actio
 -   ⚡ **High Performance** - Optimized with minimal overhead using Map storage
 -   🛡️ **Type Safe** - Full TypeScript support with generics
 -   🎯 **SWR Powered** - Built on the proven SWR library for caching and sync
--   🧪 **Zero Dependencies** - Only peer dependencies on React and SWR
+-   🧪 **Zero Setup** - SWR included, only React required as peer dependency
 
 ## Installation
 
 ```bash
-npm install @stackoverprof/use-shared-state swr react
+npm install @stackoverprof/use-shared-state
 ```
+
+> **Note:** React >=16.8.0 is required (peer dependency)
 
 ## Quick Start
 
@@ -178,7 +180,6 @@ console.log(sharedStateUtils.getPersistentKeys());
 ## Requirements
 
 -   React >= 16.8.0
--   SWR >= 1.0.0
 
 ## Examples
 
