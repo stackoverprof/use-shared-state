@@ -43,7 +43,7 @@ npm publish
 ### 4. Verify publication
 
 -   Visit https://www.npmjs.com/package/use-shared-state
--   Test installation: `npm install use-shared-state`
+-   Test installation: `npm install @stackoverprof/use-shared-state swr`
 
 ## Post-publishing
 
