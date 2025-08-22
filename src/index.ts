@@ -29,9 +29,9 @@ export const useSharedState = <T>(
         initialValue
     );
 
-    // Cross-tab sync for persistent keys
+    // Cross-tab sync for persistent keys (SSR safe)
     useEffect(() => {
-        if (!persistent) return;
+        if (!persistent || typeof window === "undefined") return;
 
         const handleStorageChange = (event: StorageEvent) => {
             const expectedStorageKey = getLocalStorageKey(key);

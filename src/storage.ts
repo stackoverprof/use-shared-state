@@ -5,13 +5,18 @@
 import { getLocalStorageKey, safeJsonParse, safeJsonStringify } from "./utils";
 
 /**
- * Storage operations wrapper with comprehensive error handling
+ * Storage operations wrapper with comprehensive error handling and SSR safety
  */
 export const storage = {
     /**
-     * Get value from localStorage with error handling
+     * Get value from localStorage with error handling and SSR safety
      */
     get: (key: string): unknown => {
+        // SSR safety check
+        if (typeof window === "undefined") {
+            return undefined;
+        }
+        
         try {
             const storageKey = getLocalStorageKey(key);
             const stored = localStorage.getItem(storageKey);
@@ -22,9 +27,14 @@ export const storage = {
     },
 
     /**
-     * Set value in localStorage with cross-tab synchronization
+     * Set value in localStorage with cross-tab synchronization and SSR safety
      */
     set: (key: string, value: unknown): void => {
+        // SSR safety check
+        if (typeof window === "undefined") {
+            return;
+        }
+        
         try {
             const storageKey = getLocalStorageKey(key);
             const serialized = safeJsonStringify(value);
@@ -44,9 +54,14 @@ export const storage = {
     },
 
     /**
-     * Remove value from localStorage with error handling
+     * Remove value from localStorage with error handling and SSR safety
      */
     remove: (key: string): void => {
+        // SSR safety check
+        if (typeof window === "undefined") {
+            return;
+        }
+        
         try {
             const storageKey = getLocalStorageKey(key);
             localStorage.removeItem(storageKey);
