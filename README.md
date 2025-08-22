@@ -33,7 +33,7 @@ npm install @stackoverprof/use-shared-state
 ## Quick Start
 
 ```tsx
-import { useSharedState } from "@stackoverprof/use-shared-state";
+import useSharedState from "@stackoverprof/use-shared-state";
 
 // Basic shared state (memory only)
 const [count, setCount] = useSharedState("counter", 0);
@@ -186,7 +186,7 @@ console.log(sharedStateUtils.getPersistentKeys());
 ### Basic Counter
 
 ```tsx
-import { useSharedState } from "@stackoverprof/use-shared-state";
+import useSharedState from "@stackoverprof/use-shared-state";
 
 function Counter() {
     const [count, setCount] = useSharedState("counter", 0);
