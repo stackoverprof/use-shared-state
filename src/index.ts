@@ -1,9 +1,9 @@
-import useSWR from "swr";
 import { useEffect } from "react";
 import { UseSharedStateReturn, SetState } from "./types";
 import { isPersistentKey, getLocalStorageKey, safeJsonParse } from "./utils";
 import { getFromMemoryOrStorage, updateValue, sharedState } from "./state";
 import { createSafeDefault } from "./defaults";
+import { useLiteSWR } from "./lite-swr";
 
 /**
  * React hook for sharing state across components with optional persistence
@@ -21,7 +21,7 @@ export const useSharedState = <T>(
     // SWR fetcher
     const fetcher = (key: string) => getFromMemoryOrStorage(key, initialValue);
 
-    const { data: state, mutate } = useSWR(key, fetcher);
+    const { data: state, mutate } = useLiteSWR(key, fetcher);
 
     // Create safe value that's never undefined
     const safeState = createSafeDefault<T>(

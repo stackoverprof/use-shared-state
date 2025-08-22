@@ -1,0 +1,107 @@
+/**
+ * Lightweight SWR replacement - only the parts we need
+ * Replaces the entire SWR dependency with ~100 lines
+ */
+
+import { useEffect, useRef, useState } from "react";
+
+// Component subscription tracker
+const subscriptions = new Map<string, Set<() => void>>();
+const cache = new Map<string, unknown>();
+
+/**
+ * Subscribe a component to a key
+ */
+const subscribe = (key: string, callback: () => void): (() => void) => {
+    if (!subscriptions.has(key)) {
+        subscriptions.set(key, new Set());
+    }
+
+    subscriptions.get(key)!.add(callback);
+
+    // Return unsubscribe function
+    return () => {
+        const subs = subscriptions.get(key);
+        if (subs) {
+            subs.delete(callback);
+            // Clean up empty subscriptions
+            if (subs.size === 0) {
+                subscriptions.delete(key);
+                cache.delete(key);
+            }
+        }
+    };
+};
+
+/**
+ * Notify all subscribers of a key
+ */
+const notify = (key: string): void => {
+    const subs = subscriptions.get(key);
+    if (subs) {
+        subs.forEach((callback) => callback());
+    }
+};
+
+/**
+ * Minimal SWR-like hook with React Strict Mode support
+ */
+export const useLiteSWR = <T>(
+    key: string,
+    fetcher: (key: string) => T
+): {
+    data: T;
+    mutate: (data: T) => void;
+} => {
+    const [, forceRender] = useState({});
+    const unsubscribeRef = useRef<(() => void) | null>(null);
+    const isInitializedRef = useRef(false);
+
+    // Initialize data if not cached (React Strict Mode safe)
+    if (!cache.has(key) && !isInitializedRef.current) {
+        cache.set(key, fetcher(key));
+        isInitializedRef.current = true;
+    }
+
+    const data = cache.get(key) as T;
+
+    // Subscribe to changes (React Strict Mode safe)
+    useEffect(() => {
+        // Prevent double subscription in Strict Mode
+        if (unsubscribeRef.current) {
+            return;
+        }
+
+        const rerender = () => forceRender({});
+        unsubscribeRef.current = subscribe(key, rerender);
+
+        return () => {
+            if (unsubscribeRef.current) {
+                unsubscribeRef.current();
+                unsubscribeRef.current = null;
+            }
+        };
+    }, [key]);
+
+    // Mutate function (stable reference)
+    const mutate = useRef((newData: T): void => {
+        cache.set(key, newData);
+        notify(key);
+    }).current;
+
+    return { data, mutate };
+};
+
+/**
+ * Debug utilities
+ */
+export const liteSWRDebug = {
+    getSubscriptions: () => subscriptions,
+    getCache: () => cache,
+    getSubscriberCount: (key: string) => subscriptions.get(key)?.size || 0,
+    getAllKeys: () => Array.from(cache.keys()),
+    clear: () => {
+        cache.clear();
+        subscriptions.clear();
+    },
+};
