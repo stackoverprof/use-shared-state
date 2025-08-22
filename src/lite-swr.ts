@@ -54,39 +54,32 @@ export const useLiteSWR = <T>(
     mutate: (data: T) => void;
 } => {
     const [, forceRender] = useState({});
-    const unsubscribeRef = useRef<(() => void) | null>(null);
-    const isInitializedRef = useRef(false);
+    const keyRef = useRef(key);
+
+    // Update key ref when key changes
+    keyRef.current = key;
 
     // Initialize data if not cached (React Strict Mode safe)
-    if (!cache.has(key) && !isInitializedRef.current) {
+    if (!cache.has(key)) {
         cache.set(key, fetcher(key));
-        isInitializedRef.current = true;
     }
 
     const data = cache.get(key) as T;
 
-    // Subscribe to changes (React Strict Mode safe)
+    // Subscribe to changes
     useEffect(() => {
-        // Prevent double subscription in Strict Mode
-        if (unsubscribeRef.current) {
-            return;
-        }
-
+        const currentKey = key;
         const rerender = () => forceRender({});
-        unsubscribeRef.current = subscribe(key, rerender);
+        const unsubscribe = subscribe(currentKey, rerender);
 
-        return () => {
-            if (unsubscribeRef.current) {
-                unsubscribeRef.current();
-                unsubscribeRef.current = null;
-            }
-        };
+        return unsubscribe;
     }, [key]);
 
-    // Mutate function (stable reference)
+    // Mutate function with current key reference
     const mutate = useRef((newData: T): void => {
-        cache.set(key, newData);
-        notify(key);
+        const currentKey = keyRef.current;
+        cache.set(currentKey, newData);
+        notify(currentKey);
     }).current;
 
     return { data, mutate };

@@ -1,7 +1,7 @@
 {
     "name": "@stackoverprof/use-shared-state",
-    "version": "1.2.1",
-    "description": "A React hook for sharing state across components using SWR with optional localStorage persistence",
+    "version": "2.0.0",
+    "description": "A lightweight React hook for sharing state across components with optional localStorage persistence and cross-tab sync",
     "type": "module",
     "main": "dist/index.js",
     "module": "dist/index.esm.js",
@@ -19,9 +19,10 @@
         "react",
         "hook",
         "state",
-        "swr",
+        "shared-state",
         "localstorage",
-        "typescript"
+        "typescript",
+        "lightweight"
     ],
     "author": "stackoverprof",
     "license": "MIT",
