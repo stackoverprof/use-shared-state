@@ -1,6 +1,6 @@
 {
     "name": "@stackoverprof/use-shared-state",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "A React hook for sharing state across components using SWR with optional localStorage persistence",
     "type": "module",
     "main": "dist/index.js",
