@@ -1,7 +1,12 @@
 import { useEffect } from "react";
 import { UseSharedStateReturn, SetState } from "./types";
 import { isPersistentKey, getLocalStorageKey, safeJsonParse } from "./utils";
-import { getFromMemoryOrStorage, updateValue, sharedState } from "./state";
+import {
+    getFromMemoryOrStorage,
+    updateValue,
+    sharedState,
+    onHydrated,
+} from "./state";
 import { createSafeDefault } from "./defaults";
 import { useLiteSWR } from "./lite-swr";
 
@@ -28,6 +33,25 @@ export const useSharedState = <T>(
         state as T | undefined,
         initialValue
     );
+
+    // SSR hydration safety: re-fetch persistent data after hydration
+    useEffect(() => {
+        if (!persistent) return;
+
+        onHydrated(() => {
+            // After hydration, check if localStorage has different data
+            const persistedValue = getFromMemoryOrStorage(key, initialValue);
+            const currentValue = sharedState.get(key);
+
+            // Only mutate if localStorage has different data than current state
+            if (
+                persistedValue !== currentValue &&
+                persistedValue !== undefined
+            ) {
+                mutate(persistedValue);
+            }
+        });
+    }, [key, persistent, initialValue, mutate]);
 
     // Cross-tab sync for persistent keys (SSR safe)
     useEffect(() => {

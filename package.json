@@ -1,7 +1,7 @@
 {
     "name": "@stackoverprof/use-shared-state",
-    "version": "2.0.2",
-    "description": "A lightweight React hook for sharing state across components with optional localStorage persistence and cross-tab sync",
+    "version": "2.2.0",
+    "description": "A zero-dependency React hook for sharing state across components with optional localStorage persistence and cross-tab sync",
     "type": "module",
     "main": "dist/index.js",
     "module": "dist/index.esm.js",
@@ -27,8 +27,7 @@
     "author": "stackoverprof",
     "license": "MIT",
     "peerDependencies": {
-        "react": ">=16.8.0",
-        "swr": ">=1.0.0"
+        "react": ">=16.8.0"
     },
     "devDependencies": {
         "@rollup/plugin-node-resolve": "^15.2.3",

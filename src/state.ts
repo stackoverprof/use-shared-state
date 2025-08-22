@@ -9,8 +9,39 @@ import { StateUpdater } from "./types";
 // Global state storage
 export const sharedState = new Map<string, unknown>();
 
+// Track hydration state and callbacks for SSR safety
+let isHydrated = false;
+const hydrationCallbacks: (() => void)[] = [];
+
+if (typeof window !== "undefined") {
+    // Mark as hydrated after initial render
+    const markHydrated = () => {
+        isHydrated = true;
+        // Execute all pending hydration callbacks
+        hydrationCallbacks.forEach((callback) => callback());
+        hydrationCallbacks.length = 0;
+    };
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", markHydrated);
+    } else {
+        markHydrated();
+    }
+}
+
 /**
- * Retrieve value from memory or storage, with initialization
+ * Register a callback to be executed after hydration
+ */
+export const onHydrated = (callback: () => void): void => {
+    if (isHydrated) {
+        callback();
+    } else {
+        hydrationCallbacks.push(callback);
+    }
+};
+
+/**
+ * Retrieve value from memory or storage, with initialization and SSR hydration safety
  */
 export const getFromMemoryOrStorage = (
     key: string,
@@ -21,8 +52,18 @@ export const getFromMemoryOrStorage = (
         return sharedState.get(key);
     }
 
-    // Persistent keys: try localStorage
+    // SSR hydration safety: for persistent keys, only use localStorage after hydration
     if (isPersistentKey(key)) {
+        // During SSR or before hydration, use initial value to prevent hydration mismatch
+        if (typeof window === "undefined" || !isHydrated) {
+            if (initialValue !== undefined) {
+                sharedState.set(key, initialValue);
+                return initialValue;
+            }
+            return undefined;
+        }
+
+        // After hydration, safe to use localStorage
         const persisted = storage.get(key);
         if (persisted !== undefined) {
             sharedState.set(key, persisted);
