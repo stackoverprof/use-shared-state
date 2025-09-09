@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
 
-A lightweight React hook for sharing state across components using SWR with optional localStorage persistence and cross-tab synchronization.
+A lightweight React hook for sharing state across components with optional localStorage persistence and cross-tab synchronization.
 
 ## 🚀 Live Demo
 
@@ -19,17 +19,17 @@ See real-time state sharing, persistence, and cross-tab synchronization in actio
 -   🔄 **Cross-tab Sync** - Automatic synchronization across browser tabs
 -   ⚡ **High Performance** - Optimized with minimal overhead using Map storage
 -   🛡️ **Type Safe** - Full TypeScript support with generics
--   🎯 **SWR Powered** - Built on the proven SWR library for caching and sync
--   🧪 **Flexible Dependencies** - SWR as peer dependency for version control
+-   🎯 **Lite SWR** - Built with custom lightweight SWR implementation (~100 lines)
+-   🧪 **Zero Dependencies** - No external dependencies except React
 
 ## Installation
 
 ```bash
-# Install the library and its peer dependencies
-npm install @stackoverprof/use-shared-state swr
+# Install the library
+npm install @stackoverprof/use-shared-state
 ```
 
-> **Note:** React >=16.8.0 and SWR >=1.0.0 are required (peer dependencies)
+> **Note:** React >=16.8.0 is required (peer dependency)
 
 ## Quick Start
 
@@ -122,13 +122,13 @@ Returns a tuple `[state, setState]` similar to React's `useState`.
 
 ### **Automatic Cleanup**
 
--   ✅ **SWR reference counting** - Cleans up when ALL components using a key unmount
+-   ✅ **Lite SWR reference counting** - Cleans up when ALL components using a key unmount
 -   ✅ **Event listeners removed** - Cross-tab sync listeners auto-cleanup
 -   ✅ **Memory efficient** - Map-based storage with garbage collection
 
 ### **What Gets Cleaned Up**
 
-| Type           | SWR Cleanup           | localStorage Cleanup         |
+| Type           | Lite SWR Cleanup      | localStorage Cleanup         |
 | -------------- | --------------------- | ---------------------------- |
 | `"user-data"`  | ✅ Auto (memory only) | ❌ N/A                       |
 | `"@user-data"` | ✅ Memory cache only  | ❌ Stays until manual delete |
@@ -181,7 +181,6 @@ console.log(sharedStateUtils.getPersistentKeys());
 ## Requirements
 
 -   React >= 16.8.0
--   SWR >= 1.0.0
 
 ## Examples
 
