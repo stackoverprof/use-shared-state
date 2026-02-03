@@ -1,6 +1,6 @@
 {
     "name": "@stackoverprof/use-shared-state",
-    "version": "2.2.1",
+    "version": "2.2.2",
     "description": "A zero-dependency React hook for sharing state across components with optional localStorage persistence and cross-tab sync",
     "type": "module",
     "main": "dist/index.js",
